@@ -6,9 +6,14 @@ const path = require("path");
 const contactsPath = path.resolve(__dirname, "./db/contacts.json");
 
 async function readDb() {
-  const dbRow = await fs.readFile(contactsPath);
-  const db = JSON.parse(dbRow);
-  return db;
+  try {
+    const dbRow = await fs.readFile(contactsPath);
+    const db = JSON.parse(dbRow);
+
+    return db;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function writeDb(db) {
@@ -16,34 +21,49 @@ async function writeDb(db) {
 }
 
 async function listContacts() {
-  const db = await readDb();
+  try {
+    const db = await readDb();
 
-  return db;
+    return db;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function getContactById(contactId) {
-  const db = await readDb();
-  const filteredContacts = db.filter((contact) => contact.id === contactId);
+  try {
+    const db = await readDb();
+    const filteredContacts = db.filter((contact) => contact.id === contactId);
 
-  return filteredContacts;
+    return filteredContacts;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function removeContact(contactId) {
-  const db = await readDb();
-  const removedContact = db.find((contact) => contact.id === contactId);
-  const updateContact = db.filter((contact) => contact.id !== contactId);
-  console.log(`Contact ${removedContact.name} has been removed`);
-  await writeDb(updateContact);
+  try {
+    const db = await readDb();
+    const removedContact = db.find((contact) => contact.id === contactId);
+    const updateContact = db.filter((contact) => contact.id !== contactId);
+    console.log(`Contact ${removedContact.name} has been removed`);
+    await writeDb(updateContact);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function addContact(name, email, phone) {
-  const id = nanoid();
-  const newContact = { id, name, email, phone };
-  const db = await readDb();
-
-  db.push(newContact);
-  console.log(`new contact ${name} has been added`);
-  await writeDb(db);
+  try {
+    const id = nanoid();
+    const newContact = { id, name, email, phone };
+    const db = await readDb();
+    db.push(newContact);
+    console.log(`new contact ${name} has been added`);
+    await writeDb(db);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {
